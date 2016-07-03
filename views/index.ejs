@@ -1,0 +1,92 @@
+<html lang="en">
+<head>
+  <!-- geolocation -->
+
+  <!-- load bootstrap + fontawesome -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> 
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> 
+  
+  <!-- angular material style sheet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.9/angular-material.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- angular libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+  <!-- routing directive -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
+
+  <!-- filepicker -->
+  <script type="text/javascript" src="https://api.filestackapi.com/filestack.js"></script>
+  <script type="text/javascript" src="/javascripts/angular_filepicker.min.js"></script>
+  
+
+  <!-- flash messages -->
+  <script src="/javascripts/angular-flash.min.js"></script>
+  
+  <!-- socket.io -->
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script src="/javascripts/socket.min.js"></script>
+  <script src="/javascripts/chatSocket.js"></script>
+
+  <!-- angular controllers and routing-->
+  <script src="/javascripts/routes.js"></script>
+  <script src="/javascripts/postCtrl.js"></script>
+  <script src="/javascripts/newPostCtrl.js"></script>
+  <script src="/javascripts/userCtrl.js"></script>
+  <script src="/javascripts/headCtrl.js"></script>
+  <script src="/javascripts/profileCtrl.js"></script>
+  <script src="/javascripts/searchCtrl.js"></script>
+  <base href="/">
+  <style>
+
+  .alert {
+  border-radius: 0px;
+  }
+</style>
+  <!-- start of doc -->
+  <span ng-app="instagram" ng-controller="headCtrl" ng-hide="currentPath">
+    <md-toolbar class="md-hue-3" style="background-color: #e74c3c;" style="padding-right: 30px;">
+      <div class="md-toolbar-tools">
+        <h2>
+          <span style="color: white; padding-left: 30px;"><a href="/">Instagram in Node.JS</a></span>
+        </h2>
+        <span type="text" class="center-block"></span>
+        <md-button class="md-raised" aria-label="New post" href="/searchusers">
+          <md-icon class="material-icon">search</md-icon>
+          search users
+        </md-button>
+        <md-button class="md-raised" aria-label="New post" href="/post/new">
+          <md-icon class="material-icon">add_box</md-icon>
+          New Post
+        </md-button>
+        <md-button class="md-raised" aria-label="Check profile" ng-click="profile(username)">
+          <md-icon class="material-icon">account_box</md-icon>
+          my profile
+        </md-button>
+        <md-button class="md-raised" aria-label="Signout" ng-click="signout()">
+          <md-icon class="material-icon">exit_to_app</md-icon>
+          logout
+        </md-button>
+
+      </div>
+    </md-toolbar>
+  </span>
+    <div class="container" style="padding-top: 30px;">
+    <flash-message
+    duration="5000"
+    show-close="true"
+    on-dismiss=""
+    ></flash-message>
+    </div>
+</head>
+
+<body ng-app="instagram" ng-cloak="" ng-controller="postCtrl">
+  <div ng-view></div>
+</body>
+
+</html>

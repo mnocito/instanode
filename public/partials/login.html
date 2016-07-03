@@ -1,0 +1,16 @@
+
+<div class="container" layout="column">
+	<div class="row">
+		<img layout-align="center center" class="md-card-image center-block" style="border-radius: 50%;" onload="this.width/=2;this.onload=null;" src="http://www.adweek.com/files/2016_May/instagram-redo-3.jpg"/> <br \>
+		<div class="col-sm-6 col-md-4 col-md-offset-4 md-whiteframe-3dp" layout-padding flex="35">
+			<form ng-submit="login(user)">	
+				<h1 class="text-center">Login</h1>
+				<img layout-align="center center" class="md-card-image center-block" style="border-radius: 50%;" onload="this.width/=2;this.onload=null;" src="http://www.essetinoconnexions.com/wp-content/uploads/2015/08/default.jpg" /> <br \>
+				<input type="text" placeholder="Username" class="form-control" ng-model="user.username"/> <br \>
+				<input type="password" placeholder="Password" class="form-control" ng-model="user.password" /> <br \>
+				<input class="btn btn-primary center-block" style="width: 200px;" type="submit" value="Login" />
+			</form>
+			<div class="text-center"><a href="/signup">Or signup here</a></div> <br \>		
+		</div>
+	</div>
+</div>

@@ -1,0 +1,36 @@
+<div flex="30" layout="column" style="margin: auto;" >
+  <md-content style="height: 100%">
+  <h1 ng-hide="posts">:( You aren't following anybody. Click the "search users" button, or <a href="/searchusers">click here</a>. </h1>
+  <md-card class="layout-padding md-padding md-whiteframe-3dp" ng-repeat="post in posts" ng-show="posts">
+        <md-card-header style="">
+          <md-card-avatar style="">
+            <img style="border-radius: 50%" ng-src="{{post.profileUrl}}">
+          </md-card-avatar>
+          <md-card-header-text>
+            <span class="md-title">{{post.createdby}} <span style="float: right;">3h</span></span>
+            <span class="md-subhead">{{post.location}}</span>
+          </md-card-header-text>
+        </md-card-header>
+        <img ng-src="{{post.url}}" class="md-card-image" style="overflow: auto;" alt="dank image">
+        <md-card-content> 
+          <p> 
+          	<span class="glyphicon glyphicon-heart" style="color: #e74c3c;"></span> <span ng-hide="post.likedby[0]"><strong>0 likes</strong></span>
+            <span ng-repeat="name in post.likedby"><strong>{{name}}<span ng-show="!$last">, </span></strong></span><br \>
+          	<span ng-show="post.caption"><strong>{{post.createdby}}</strong> {{post.caption}}</span> <br \>
+          	<span ng-show="post.comments[0]" ng-repeat="comment in post.comments"><strong>{{comment.createdby}}</strong> {{comment.body}} <span ng-show="!$last"><br \></span></span>
+          </p>
+        </md-card-content>
+      <form layout layout-align="center" ng-submit="add(post, commentbody)" >
+   		 <div layout="row" flex>
+      		<md-input-container flex class="md-icon-float md-block md-title" >
+        		<input type="text" ng-model="commentbody"\ placeholder="Comment">
+        		<md-icon class="material_icon" ng-click="like(post)" ng-hide="liked">favorite_outline</md-icon>
+        		<md-icon class="material_icon" style="color: #e74c3c;" ng-click="like(post)" ng-show="liked">favorite</md-icon>
+      		</md-input-container>
+      	</div>
+      	
+  		</form>
+  		</div>
+  </md-card>
+</md-content>
+</div>

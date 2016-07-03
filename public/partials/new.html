@@ -1,0 +1,26 @@
+
+ <div class="container" style="padding-top: 20px;">
+ <h2 style="text-align: center;"> NEW POST </h2>
+  <form>  
+     <h4  style="padding-left: 0px;">Add an image to your post <br \></h4>
+      <md-button class="md-raised md-primary" ng-click="upload()">
+      <md-icon class="material-icon" style="display:inline-block;" >photo_camera</md-icon>
+      Add image
+  	  </md-button> <br \>
+
+
+    <md-input-container class="md-block" >
+      <!-- Use floating placeholder instead of label -->
+      <input ng-model="post.caption" type="text" placeholder="Caption" md-no-float ng-required="false">
+    </md-input-container>
+
+    <md-input-container class="md-block" >
+      <!-- Use floating placeholder instead of label -->
+      <input ng-model="post.location" type="text" placeholder="Enter location (placeholder)" ng-required="false">
+    </md-input-container>
+    <md-button class="md-raised md-primary" ng-click="add(post)" style="padding-left: -36px;" style="padding: 0px;" md-no-float>
+      <md-icon class="material-icon" style="display:inline-block;" >check_box</md-icon>
+      Post
+    </md-button>
+  </form>
+</div>

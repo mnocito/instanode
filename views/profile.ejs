@@ -1,0 +1,173 @@
+<html>
+<head>
+  <!-- geolocation -->
+
+  <!-- load bootstrap + fontawesome -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> 
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> 
+  
+  <!-- angular material style sheet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.9/angular-material.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- angular libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+  <!-- routing directive -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
+
+  <!-- filepicker -->
+  <script type="text/javascript" src="https://api.filestackapi.com/filestack.js"></script>
+  <script type="text/javascript" src="/javascripts/angular_filepicker.min.js"></script>
+
+  <!-- flash messages -->
+  <script src="/javascripts/angular-flash.min.js"></script>
+  
+  <!-- socket.io -->
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script src="/javascripts/socket.min.js"></script>
+  <script src="/javascripts/chatSocket.js"></script>
+
+  <!-- angular controllers and routing-->
+  <script src="/javascripts/routes.js"></script>
+  <script src="/javascripts/headCtrl.js"></script>
+  <script src="/javascripts/profileCtrl.js"></script>
+  <base href="/">
+  <script type='text/javascript'>
+    var name =<%-JSON.stringify(name)%>
+  </script>
+  <style>
+    .overlay1 {
+      transition: opacity 0.5s ease;
+      -webkit-transition: opacity 0.5s ease;
+      -moz-transition: opacity 0.5s ease;
+    }
+    .overlay1 {
+      max-width: 25vw;
+    }
+    .overlay1:hover  {
+      opacity:.7; 
+      background: linear-gradient(
+      rgba(0, 0, 0, 0.7), 
+      rgba(0, 0, 0, 0.7)
+      )
+    }
+
+    .overlay1 {
+      background:rgba(0,0,0,0.6);
+      opacity: 1;
+    }
+    .looklikelink {
+    background:none!important;
+     border:none; 
+     padding:0!important;
+    
+    /*optional*/
+    font-family:arial,sans-serif; /*input has OS specific font-family*/
+     color:#069;
+     cursor:pointer;
+    }
+    .looklikelink:hover{
+         text-decoration:underline;
+    }
+  </style>
+  <span ng-app="instagram" ng-controller="headCtrl" ng-show="auth">
+    <md-toolbar class="md-hue-3" style="background-color: #e74c3c;" style="padding-right: 30px;">
+      <div class="md-toolbar-tools">
+        <h2>
+          <button ng-click="tologin()" style="background-color: transparent; border: none; outline: none; overflow: hidden;"><span style="color: white; padding-left: 30px;">Instagram in Node.JS</span></button>
+        </h2>
+        <span type="text" class="center-block"></span>
+        <md-button class="md-raised" aria-label="New post" ng-click="tosearch()">
+          <md-icon class="material-icon">search</md-icon>
+          search users
+        </md-button>
+        <md-button class="md-raised" aria-label="New post" ng-click="tonew()">
+          <md-icon class="material-icon">add_box</md-icon>
+          New Post
+        </md-button>
+        <md-button class="md-raised" aria-label="Check profile" ng-click="profile(username)">
+          <md-icon class="material-icon">account_box</md-icon>
+          my profile
+        </md-button>
+        <md-button class="md-raised" aria-label="Signout" ng-click="signout()">
+          <md-icon class="material-icon">exit_to_app</md-icon>
+          logout
+        </md-button>
+      </div>
+    </md-toolbar>
+  </span>
+  <span ng-app="instagram" ng-controller="headCtrl" ng-hide="auth">
+    <md-toolbar class="md-hue-3" style="background-color: #e74c3c;" style="padding-right: 30px;">
+      <div class="md-toolbar-tools" style="padding-right: 50px;">
+        <h2>
+           <button ng-click="tologin()" style="background-color: transparent; border: none; outline: none; overflow: hidden;"><span style="color: white; padding-left: 30px;">Instagram in Node.JS</span></button>
+        </h2>
+        <span class="center-block"></span>
+        <md-button class="md-raised" class="center-block" aria-label="Login" ng-click="tologin()">
+          <md-icon class="material-icon">exit_to_app</md-icon>
+          Login
+        </md-button>
+      </div >
+    </md-toolbar>
+  </span>
+    <div class="container" style="padding-top: 30px;">
+      <flash-message
+      duration="5000"
+      show-close="true"
+      on-dismiss=""
+      ></flash-message>
+    </div>
+</head>
+<body ng-controller="profileCtrl" ng-app="instagram">
+<div class="container" ng-hide="isediting">
+  <div class="container">
+    <img ng-show="user.profileurl" ng-src="{{user.profileurl}}" style="border-radius: 50%; height: 200px; width: 200px;" />
+    <img ng-hide="user.profileurl" ng-src="https://qph.ec.quoracdn.net/main-qimg-3b0b70b336bbae35853994ce0aa25013" style="border-radius: 50%; height: 200px; width: 200px;" />
+    <div style="display: inline; position: absolute;">
+      <h1 style="display: inline; padding-left: 150px; vertical-align: top;"> {{user.username}} </h1> 
+      <md-button ng-show="auth" ng-hide="name == username" style="display: inline; vertical-align: top;" height="30px" class="md-raised" aria-label="Follow" ng-click="follow(user.username)">
+       FOLLOW
+      </md-button>
+      <md-button ng-show="name == username" style="display: inline; vertical-align: top;" height="30px" class="md-raised" aria-label="edit" ng-click="edit()">
+       EDIT PROFILE
+      </md-button>
+     <h4 style="display: block; vertical-align: top; padding-left: 150px; padding-top: 20px;" ng-show="user.bio"><strong>{{user.bio}}</strong></h4>
+     <h4 style="display: block; vertical-align: top; padding-left: 150px; padding-top: 20px;"><strong>{{user.posts.length}} posts | {{user.followers.length}} followers | {{user.following.length}} following</strong></h4>
+    </div>
+  </div>
+  <div class="container" style="padding-top: 40px;">
+    <md-grid-list md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="3" md-row-height-gt-md="1:1" md-row-height="2:2" md-gutter="12px" md-gutter-gt-sm="8px">
+      <md-grid-tile ng-repeat="post in user.posts | orderBy:'-$index':true" class="overlay1" ng-mouseover="post.hover = true;" ng-mouseleave="post.hover = false;" style="background-position: center; background-size: cover;" ng-style="{'background-image': 'url({{post.url}})'}" ng-click="show($event, post)">
+      <span style="color: white;" ng-show="post.hover"><h5><md-icon style="color: white;" class="material-icon">favorite</md-icon>&nbsp{{post.likedby.length}} like<span ng-if="post.likedby.length != 1">s</span> <md-icon style="color: white;" class="material-icon">mode_comment</md-icon>&nbsp {{post.comments.length}} comment<span ng-if="post.comments.length != 1">s</span></h5></span>
+      </md-grid-tile>
+    </md-grid-list>
+  </div>
+</div>
+<div class="container" ng-show="isediting">
+  <h2 style="text-align: center;"> EDIT PROFILE </h2>
+  <form>  
+     <h4  style="padding-left: 0px;">Add an image to your post <br \></h4>
+    <md-button class="md-raised md-primary" ng-click="uploadprofilepic()">
+      <md-icon class="material-icon" style="display:inline-block;" >photo_camera</md-icon>
+      Add profile picture
+    </md-button> <br \>
+
+
+    <md-input-container class="md-block" >
+      <!-- Use floating placeholder instead of label -->
+      <input ng-model="edituser.bio" type="text" placeholder="Bio" md-no-float ng-required="false">
+    </md-input-container>
+    <md-button class="md-raised md-primary" ng-click="update(edituser)" style="padding-left: -36px;" style="padding: 0px;" md-no-float>
+      <md-icon class="material-icon" style="display:inline-block;" >perm_identity</md-icon>
+      Update profile
+    </md-button>
+  </form>
+</div>
+</div>
+</body>
+</html>
