@@ -1,0 +1,34 @@
+<div class="container">
+	<h1 style="text-align: center;">ALERTS</h1>
+	<div class="col-xs-6">
+	<table class="table table-striped" style="float: left;">
+		<tr>
+			<th>NEW ALERTS</th>
+		</tr>
+		<tr ng-repeat="alert in alerts | orderBy: '-$index':true">
+			<td ng-if="alert.viewed == false"> 
+				<span style="color: red; font-size: 25px;">&#8226;</span>
+				<img ng-show="alert.profileurl" ng-src="{{alert.profileurl}}" style="height: 80px; width: 80px; border-radius: 50%;">
+				<img ng-hide="alert.profileurl" ng-src="https://qph.ec.quoracdn.net/main-qimg-3b0b70b336bbae35853994ce0aa25013" style="height: 80px; width: 80px; border-radius: 50%;">
+				<span style="padding: 30px;" ng-if="alert.type === 'like'"><strong>{{alert.liker}}</strong> liked <a style="pointer: cursor;" ng-click="topost($event, alert.posturl)">your post</a></span>
+				<span style="padding: 30px;" ng-if="alert.type === 'comment'"><strong>{{alert.commenter}}</strong> commented on <a style="pointer: cursor;" ng-click="topost($event, alert.posturl)">your post</a>: "{{alert.comment}}" </span>
+			</td>
+		</tr>
+	</table>
+	</div>
+	<div class="col-xs-6">
+	<table class="table table-striped" style="float: left;">
+		<tr>
+			<th>OLD ALERTS</th>
+		</tr>
+		<tr ng-repeat="alert in alerts | orderBy: '-$index':true">
+			<td ng-if="alert.viewed == true"> 
+				<img ng-show="alert.profileurl" ng-src="{{alert.profileurl}}" style="height: 80px; width: 80px; border-radius: 50%;">
+				<img ng-hide="alert.profileurl" ng-src="https://qph.ec.quoracdn.net/main-qimg-3b0b70b336bbae35853994ce0aa25013" style="height: 80px; width: 80px; border-radius: 50%;">
+				<span style="padding: 30px;" ng-if="alert.type === 'like'"><strong>{{alert.liker}}</strong> liked <a style="pointer: cursor;" ng-click="topost($event, alert.posturl)">your post</a></span>
+				<span style="padding: 30px;" ng-if="alert.type === 'comment'"><strong>{{alert.commenter}}</strong> commented on <a style="pointer: cursor;" ng-click="topost($event, alert.posturl)">your post</a>: "{{alert.comment}}" </span>
+			</td>
+		</tr>
+	</table>
+	</div>
+</div>

@@ -24,6 +24,8 @@
   <script type="text/javascript" src="https://api.filestackapi.com/filestack.js"></script>
   <script type="text/javascript" src="/javascripts/angular_filepicker.min.js"></script>
   
+  <!-- hashtagify -->
+  <script src="/javascripts/angular-hashtagify.min.js"></script>
 
   <!-- flash messages -->
   <script src="/javascripts/angular-flash.min.js"></script>
@@ -41,48 +43,79 @@
   <script src="/javascripts/headCtrl.js"></script>
   <script src="/javascripts/profileCtrl.js"></script>
   <script src="/javascripts/searchCtrl.js"></script>
+  <script src="/javascripts/alertCtrl.js"></script>
   <base href="/">
   <style>
-
   .alert {
-  border-radius: 0px;
+    border-radius: 0px;
   }
-</style>
+  </style>
   <!-- start of doc -->
   <span ng-app="instagram" ng-controller="headCtrl" ng-hide="currentPath">
     <md-toolbar class="md-hue-3" style="background-color: #e74c3c;" style="padding-right: 30px;">
-      <div class="md-toolbar-tools">
-        <h2>
-          <span style="color: white; padding-left: 30px;"><a href="/">Instagram in Node.JS</a></span>
-        </h2>
-        <span type="text" class="center-block"></span>
-        <md-button class="md-raised" aria-label="New post" href="/searchusers">
-          <md-icon class="material-icon">search</md-icon>
-          search users
-        </md-button>
-        <md-button class="md-raised" aria-label="New post" href="/post/new">
-          <md-icon class="material-icon">add_box</md-icon>
-          New Post
-        </md-button>
-        <md-button class="md-raised" aria-label="Check profile" ng-click="profile(username)">
-          <md-icon class="material-icon">account_box</md-icon>
-          my profile
-        </md-button>
-        <md-button class="md-raised" aria-label="Signout" ng-click="signout()">
-          <md-icon class="material-icon">exit_to_app</md-icon>
-          logout
-        </md-button>
-
-      </div>
-    </md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>
+        <span style="color: white; padding-left: 30px;"><a href="/">Instagram in Node.JS</a></span>
+      </h2>
+      <md-content class="center-block" style="width: 300px;">
+      <md-autocomplete 
+      id="autocomp"
+      md-no-cache="true"
+      md-selected-item="selectedItem" 
+      md-search-text-change="filterOut(users)" 
+      md-search-text="searchText" 
+      md-selected-item-change="selectuser(user)" 
+      md-items="user in filterOut(users)"
+      md-item-text="user.username" 
+      md-min-length="0" 
+      placeholder="Find users" >
+      <md-item-template flex style="display: flex; height: 100px;">
+      <span style="height: 100px;">
+       <md-card-avatar style="border-radius: 50%">
+       <img ng-show="user.profileurl" style="border-radius: 50%; height: 40px; width: 40px;" ng-src="{{user.profileurl}}">
+       <img ng-hide="user.profileurl" ng-src="https://qph.ec.quoracdn.net/main-qimg-3b0b70b336bbae35853994ce0aa25013" style="border-radius: 50%; height: 40px; width: 40px;" />
+     </md-card-avatar>
+     <span style="padding-left: 20px; display: inline-block; line-height: 2;"><strong> {{user.username}} </strong></span> <br \>
+     <span style="display: inline; border-bottom-width: 0;">
+      <strong>{{user.bio}}</strong>
+    </span>
   </span>
-    <div class="container" style="padding-top: 30px;">
-    <flash-message
-    duration="5000"
-    show-close="true"
-    on-dismiss=""
-    ></flash-message>
-    </div>
+</md-item-template>
+<md-not-found>
+No users matching "{{searchText}}" were found.
+</md-not-found>
+</md-autocomplete>
+</md-content>
+<md-button class="md-raised" aria-label="New post" ng-click="toalerts()">
+<md-icon class="material-icon">error</md-icon>
+Alerts
+<md-tooltip md-autohide md-visible="showalert" md-direction="left" ng-if="showalert || alertmsg">
+    {{alertmsg}}
+</md-tooltip>
+</md-button>
+<md-button class="md-raised" aria-label="New post" href="/post/new">
+<md-icon class="material-icon">add_box</md-icon>
+New Post
+</md-button>
+<md-button class="md-raised" aria-label="Check profile" ng-click="profile(username)">
+<md-icon class="material-icon">account_box</md-icon>
+my profile
+</md-button>
+<md-button class="md-raised" aria-label="Signout" ng-click="signout()">
+<md-icon class="material-icon">exit_to_app</md-icon>
+logout
+</md-button>
+</div>
+</md-toolbar>
+</span>
+
+<div class="container" style="padding-top: 30px;">
+  <flash-message
+  duration="5000"
+  show-close="true"
+  on-dismiss=""
+  ></flash-message>
+</div>
 </head>
 
 <body ng-app="instagram" ng-cloak="" ng-controller="postCtrl">

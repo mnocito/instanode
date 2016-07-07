@@ -30,7 +30,6 @@ app.controller('newPostCtrl', function ($scope, $http, $location, filepickerServ
       }
       if(post.caption) {
         post.hashtags = post.caption.match(/#\S+/g);
-        post.caption =  post.caption.replace(/#(\S*)/g,'<a  href="/hashtag/$1">#$1</a>');
       }
       if(!post.location) {
         post.location = '';

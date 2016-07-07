@@ -1,4 +1,4 @@
-var app = angular.module('instagram', ['ngMaterial', 'ngRoute', 'angular-filepicker', 'ngFlash', 'btford.socket-io']);
+var app = angular.module('instagram', ['ngMaterial', 'ngRoute', 'angular-filepicker', 'ngFlash', 'btford.socket-io', 'hashtagify']);
 app.config(function($routeProvider, $locationProvider, filepickerProvider) {
 	filepickerProvider.setKey("AgDOdGLchTGCbHKEe4cZyz");
 	$locationProvider.html5Mode(true);
@@ -27,9 +27,9 @@ app.config(function($routeProvider, $locationProvider, filepickerProvider) {
 			templateUrl: "/partials/searchusers.html",
 			controller: "searchCtrl"
 		})
-		.when('/hashtag/:tag', {
-			templateUrl: "/partials/searchusers.html",
-			controller: "hashtagCtrl"
+		.when('/alerts', {
+			templateUrl: "/partials/alerts.html",
+			controller: "alertCtrl"
 		})
 		.otherwise({
 			redirectTo: "/"

@@ -13,7 +13,6 @@ router.get('/authenticated', function(req, res) {
 	});
 });
 router.get('/user/:name', function(req, res) {
-	console.log(req.params.name);
 	User.findOne({
 		'username': req.params.name
 	}, function(err, user) {
@@ -36,11 +35,9 @@ router.get('/user/:name', function(req, res) {
 	});
 });
 router.get('/error', function(req, res) {
-	console.log('rendering error')
 	res.render('error');
 })
 router.post('/user/:name', function(req, res) {
-	console.log(req.params.name);
 	User.findOneAndUpdate({
 			'username': req.params.name
 		}, {
@@ -51,7 +48,8 @@ router.post('/user/:name', function(req, res) {
 					caption: req.body.caption,
 					date: req.body.date,
 					likedby: req.body.likedby,
-					comments: req.body.comments
+					comments: req.body.comments,
+					hashtags: req.body.hashtags
 				}
 			}
 		}, {
@@ -86,17 +84,12 @@ router.post('/updateuser/:name', function(req, res) {
 			upsert: true
 		},
 		function(err, user) {
-			if (err) {
-				res.send({
-					type: "danger",
-					message: "An unexpected error has occurred."
-				})
-			}
+			if (err) {}
 			if (user) {
 				res.send({
-					type: "success",
-					message: "Updated successfully."
-				});
+					profileurl: user.profileurl,
+					bio: req.body.bio
+				})
 			}
 		});
 });
@@ -104,31 +97,11 @@ router.get('/profile/:id', function(req, res) {
 	res.render('profile', {
 		name: req.params.id
 	});
-	console.log(req.params.id)
 });
-router.post('/like/:name', function(req, res) {
-	User.findOneAndUpdate({
-		'username': req.params.name,
-		"posts.url": req.body.url
-	}, {
-		$push: {
-			"posts.$.likedby": req.body.name
-		}
-	}, {
-		safe: true,
-		upsert: true,
-		new: true
-	}, function(err, user) {
-		if (err) {
-			console.log(err);
-			res.send(err)
-		}
-		if (user) {
-			// USER STUFF HERE
-		}
-	});
-})
 router.post('/unlike/:name', function(req, res) {
+	function findpost(post) {
+		return post.url === req.body.url;
+	}
 	User.findOneAndUpdate({
 		'username': req.params.name,
 		"posts.url": req.body.url
@@ -146,17 +119,25 @@ router.post('/unlike/:name', function(req, res) {
 			res.send(err)
 		}
 		if (user) {
-// USER STUFF HERE
+			res.send({
+				post: user.posts.find(findpost)
+			})
 		}
 	});
 })
-router.post('/comment/:name', function(req, res) {
+router.post('/deletecomment/:name', function(req, res) {
+	function findpost(post) {
+		return post.url === req.body.url;
+	}
 	User.findOneAndUpdate({
 		'username': req.params.name,
 		"posts.url": req.body.url
 	}, {
-		$push: {
-			"posts.$.comments": req.body.commentbody
+		$pull: {
+			"posts.$.comments": {
+				createdby: req.body.commenttodelete.createdby,
+				body: req.body.commenttodelete.body
+			}
 		}
 	}, {
 		safe: true,
@@ -168,17 +149,22 @@ router.post('/comment/:name', function(req, res) {
 			res.send(err)
 		}
 		if (user) {
-			// USER STUFF HERE
+			res.send({
+				post: user.posts.find(findpost)
+			})
 		}
 	});
-})
+});
+
 router.post('/delete/:name', function(req, res) {
 	console.log('hi')
 	User.findOneAndUpdate({
 		'username': req.params.name
 	}, {
 		$pull: {
-			"posts": {url: req.body.url}
+			"posts": {
+				url: req.body.url
+			}
 		}
 	}, {
 		safe: true,
@@ -193,6 +179,145 @@ router.post('/delete/:name', function(req, res) {
 			res.send('nice')
 		}
 	});
+});
+router.get('/profilepic/:name', function(req, res) {
+	User.findOne({
+			'username': req.params.name
+		},
+		function(err, user) {
+			if (err) {
+				res.send({
+					type: "danger",
+					message: "An unexpected error has occurred."
+				})
+			}
+			if (user) {
+				res.send({
+					picurl: user.profileurl
+				});
+			}
+		});
+})
+router.post('/like/:name', function(req, res) {
+	function findpost(post) {
+		return post.url === req.body.url;
+	}
+	User.findOneAndUpdate({
+		'username': req.params.name,
+		"posts.url": req.body.url
+	}, {
+		$push: {
+			"posts.$.likedby": req.body.name,
+			"alerts": {
+				type: "like",
+				viewed: false,
+				liker: req.body.name,
+				posturl: req.body.url,
+				profileurl: req.user.profileurl
+			}
+		}
+	}, {
+		safe: true,
+		upsert: true,
+		new: true
+	}, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.send(err)
+		}
+		if (user) {
+			var post = user.posts.find(findpost);
+			console.log(post.url)
+			res.send({
+				post: user.posts.find(findpost)
+			})
+		}
+	});
+})
+
+router.post('/comment/:name', function(req, res) {
+	function findpost(post) {
+		return post.url === req.body.url;
+	}
+	var pic = "";
+	User.findOneAndUpdate({
+		'username': req.params.name,
+		"posts.url": req.body.url
+	}, {
+		$push: {
+			"posts.$.comments": req.body.commentbody,
+			"alerts": {
+				type: "comment",
+				viewed: false,
+				commenter: req.body.commentbody.createdby,
+				comment: req.body.commentbody.body,
+				posturl: req.body.url,
+				profileurl: req.user.profileurl
+			}
+		}
+	}, {
+		safe: true,
+		upsert: true,
+		new: true
+	}, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.send(err)
+		}
+		if (user) {
+			res.send({
+				post: user.posts.find(findpost)
+			})
+		}
+	});
+})
+router.get('/alertnums/:name', function(req, res) {
+	User.findOne({
+		username: req.params.name
+	}, function(err, user) {
+		var likecount = 0;
+		var commentcount = 0;
+		for (var i in user.alerts) {
+			if (!user.alerts[i].viewed) {
+				if (user.alerts[i].type == 'like') {
+					likecount++;
+				} else if (user.alerts[i].type == 'comment') {
+					commentcount++;
+				}
+			}
+		}
+		res.send({
+			alertlikes: likecount,
+			alertcomments: commentcount
+		})
+	})
+})
+router.get('/alerts/:name', function(req, res) {
+	User.findOne({
+		username: req.params.name
+	}, function(err, user) {
+		res.send({
+			alerts: user.alerts
+		});
+	})
+	var unviewedalerts = 0;
+	for (var i = 0; i < req.user.alerts; i++) {
+		if (!req.user.alerts[i].viewed) {
+			unviewedalerts++;
+		}
+	}
+	User.findOne({
+		username: req.params.name,
+	}, function(err, user) {
+		for (var i = 0; i < user.alerts.length; i++) {
+			if (!user.alerts[i].viewed) {
+				user.alerts[i].viewed = true;
+			}
+		}
+		user.update(user, function(err, user) {})
+	})
+
+
 })
 
 router.get('/post/new', function(req, res) {
@@ -205,7 +330,11 @@ router.get('/login', function(req, res) {
 	res.render('index');
 });
 router.get('/hashtag/:id', function(req, res) {
-	res.render('hashtag', {tag: req.params.id});
+	res.render('hashtag', {
+		tag: req.params.id
+	});
 });
-
+router.get('/alerts', function(req, res) {
+	res.render('index');
+});
 module.exports = router;

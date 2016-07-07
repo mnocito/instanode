@@ -1,4 +1,7 @@
 var express = require('express');
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -6,13 +9,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var auth = require('./routes/auth')(passport);
-var app = express();
-var dbConfig = require('./db.js');
+var alerts = require('./routes/alerts')(io);
 var profile = require('./routes/profile')
+var hashtags = require('./routes/hashtagsearch')
+var usersearch = require('./routes/usersearch')
+var follow = require('./routes/follow')
+var dbConfig = require('./db.js');
 var mongoose = require('mongoose');
 var expressSession = require('express-session');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
 var mongoose = require('mongoose')
 require('./models/user')
 var User = mongoose.model('User');
@@ -36,14 +40,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressSession({
   secret: 'mySecretKey'
 }));
+
 // set up passport
 app.use(passport.initialize());
 app.use(passport.session());
 var initPassport = require('./passport/init');
 initPassport(passport);
 
+// set up routes
 app.use('/', profile);
 app.use('/', auth);
+app.use('/', hashtags);
+app.use('/', usersearch);
+app.use('/', follow);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -52,16 +61,10 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-
-// development error handler
-// will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    res.render('error');
   });
 }
 
@@ -73,16 +76,6 @@ app.use(function(err, req, res, next) {
   res.render('error', {
     message: err.message,
     error: {}
-  });
-});
-
-io.on('connect', function(sock) {
-  console.log('a user has connected');
-  sock.on('liked', function() {
-    console.log('liked post');
-  });
-  sock.on('sendingmsg', function(msg) {
-    sock.emit('returnmsg', msg)
   });
 });
 module.exports = app;

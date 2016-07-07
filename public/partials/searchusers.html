@@ -1,1 +1,31 @@
-we searchin fam
+<div class="container">
+  <md-content class="md-padding" style="width: 300px;">
+      <md-autocomplete 
+      id="autocomp"
+      md-selected-item="selectedItem" 
+      md-search-text-change="searchTextChange(searchText)" 
+      md-search-text="searchText" 
+      md-selected-item-change="selectuser(user)" 
+      md-items="user in filterOut(users)"
+      md-item-text="user.username" 
+      md-min-length="0" 
+      md-match-case-insensitive="true"
+      placeholder="Find users" >
+        <md-item-template flex style="display: flex; height: 100px;">
+          <span style="height: 100px;">
+           <md-card-avatar style="border-radius: 50%">
+            <img style="border-radius: 50%; height: 40px; width: 40px;" ng-src="{{user.profileurl}}">
+            <img ng-hide="user.profileurl" ng-src="https://qph.ec.quoracdn.net/main-qimg-3b0b70b336bbae35853994ce0aa25013" style="border-radius: 50%;" />
+          </md-card-avatar>
+            <span style="padding-left: 20px; display: inline-block; line-height: 2;"><strong> {{user.username}} </strong></span> <br \>
+            <span style="display: inline; border-bottom-width: 0;">
+              <strong>{{user.bio}}</strong>
+            </span>
+          </span>
+        </md-item-template>
+        <md-not-found>
+          No users matching "{{searchText}}" were found.
+        </md-not-found>
+      </md-autocomplete>
+  </md-content>
+</div>

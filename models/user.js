@@ -9,6 +9,7 @@ var userSchema = mongoose.Schema({
 	following: {type: Array, default: []},
 	followers: {type: Array, default: []},
 	requestedby: {type: Array, default: []},
+	requestedto: {type: Array, default: []},
 	alerts: {type: Array, default: []}
 });
 

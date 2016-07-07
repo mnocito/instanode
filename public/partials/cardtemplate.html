@@ -3,12 +3,13 @@
 <md-dialog aria-label="Mango (Fruit)"  ng-cloak>
       <md-card md-theme="default" class="layout-padding md-padding md-whiteframe-3dp" style="overflow: hidden;">
         <md-card-header style="">
-          <md-card-avatar style="border-radius: 50%">
-            <img style="border-radius: 50%" ng-src="{{user.profileurl}}">
-            <img ng-hide="user.profileurl" ng-src="https://qph.ec.quoracdn.net/main-qimg-3b0b70b336bbae35853994ce0aa25013" style="border-radius: 50%;" />
+          <md-card-avatar style="border-radius: 50%" ng-click="gotoprofile(post.createdby)">
+            <img style="border-radius: 50%" ng-show="post.creatorpic" ng-src="{{post.creatorpic}}" style="cursor:pointer">
+            <img style="border-radius: 50%" ng-show="user.profileurl" ng-src="{{user.profileurl}}" style="cursor:pointer">
+            <img ng-hide="post.creatorpic || user.profileurl" ng-src="https://qph.ec.quoracdn.net/main-qimg-3b0b70b336bbae35853994ce0aa25013" style="border-radius: 50%;" style="cursor:pointer"/>
           </md-card-avatar>
           <md-card-header-text>
-            <span class="md-title">{{post.createdby}} <span style="float: right;"><strong>{{post.date}}&nbsp</strong><span ng-show="name == username" ng-click="delete(post)" style="color: red;">X</span></span></span>
+            <span class="md-title"><strong ng-click="gotoprofile(post.createdby)" style="cursor:pointer">{{post.createdby}}</strong><span style="float: right;"><strong>{{post.date}}&nbsp</strong></span></span>
             <span class="md-subhead">{{post.location}}</span>
           </md-card-header-text>
         </md-card-header>
@@ -16,16 +17,21 @@
         <md-card-content style="overflow: auto;"> 
           <p style="word-wrap: break-word;"> 
             <span class="glyphicon glyphicon-heart" style="color: #e74c3c;"></span> <span><strong>{{post.likedby.length}} like<span ng-if="post.likedby.length != 1">s</span></strong></span> <br \>
-            <span ng-show="post.caption"><strong>{{post.createdby}}:</strong> <span ng-bind-html="post.caption"></span><br \></span>
-            <span ng-show="post.comments[0]" ng-repeat="comment in post.comments"><strong>{{comment.createdby}}:</strong> {{comment.body}} <span style="float: right;" ng-if="comment.createdby == username">x</span><br \></span>
+            <span ng-show="post.caption"><strong ng-click="gotoprofile(post.createdby)">{{post.createdby}}:</strong>
+              <span hashtagify
+              term-click="tagTermClick($event)" 
+              user-click="tagUserClick($event)">
+              {{post.caption}}
+              </span><br \></span>
+            <span ng-show="post.comments[0]" ng-repeat="comment in post.comments"><span hashtagify term-click="tagTermClick($event)" user-click="tagUserClick($event)"><strong ng-click="gotoprofile(comment.createdby)">{{comment.createdby}}:</strong> {{comment.body}} </span><span style="float: right; color: red;" ng-if="comment.createdby == username" ng-click="deletecomment(post, comment)">x</span><br \></span>
           </p>
       <span ng-show="username">
-      <form layout layout-align="center" ng-submit="add(post, commentbody)" >
+      <form layout layout-align="center" ng-submit="add(post, commentbody, $event)" >
        <div layout="row" flex>
           <md-input-container flex class="md-icon-float md-block md-title" >
             <input type="text" ng-model="commentbody" placeholder="Comment">
-            <md-icon class="material_icon" ng-click="like(post)" ng-hide="post.likedby.includes(username)">favorite_outline</md-icon>
-            <md-icon class="material_icon" style="color: #e74c3c;" ng-click="unlike(post)" ng-show="post.likedby.includes(username)">favorite</md-icon>
+            <md-icon class="material_icon" ng-click="like(post, $event)" ng-hide="post.likedby.includes(username)">favorite_outline</md-icon>
+            <md-icon class="material_icon" style="color: #e74c3c;" ng-click="unlike(post, $event)" ng-show="post.likedby.includes(username)">favorite</md-icon>
           </md-input-container>
         </div>
       </form>

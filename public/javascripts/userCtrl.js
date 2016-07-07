@@ -22,7 +22,7 @@ app.controller('userCtrl', function ($scope, $http, $location, Flash, $rootScope
 				$rootScope.username = res.user.username;
 				console.log("name: " + $rootScope.username)
 				Flash.clear();
-				$window.history.back();
+				$window.location = $window.location.origin;
 			}
 			Flash.create(res.type, res.message);
 		})

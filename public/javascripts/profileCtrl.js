@@ -1,10 +1,10 @@
 app.controller('profileCtrl', ['chatSocket', '$scope', '$http', '$location', 'Flash', '$routeParams', '$rootScope', '$mdDialog', 'filepickerService', '$window', '$sce', '$compile', function(chatSocket, $scope, $http, $location, Flash, $routeParams, $rootScope, $mdDialog, filepickerService, $window, $sce, $compile) {
   //chatsockets
-  $scope.$on('$routeChangeStart', function(next, current) { 
-  if($location.path().substring(0, 8) == '/hashtag') {
-    $window.location = $window.location.origin + $location.path();
-  }
- });
+  $scope.$on('$routeChangeStart', function(next, current) {
+    if ($location.path().substring(0, 8) == '/hashtag') {
+      $window.location = $window.location.origin + $location.path();
+    }
+  });
   $scope.messages = []
   $scope.edit = false;
   $scope.name = name;
@@ -32,7 +32,7 @@ app.controller('profileCtrl', ['chatSocket', '$scope', '$http', '$location', 'Fl
       post.dated = true;
     }
     $scope.post = post;
-    if(!$scope.post.setasHTML) {
+    if (!$scope.post.setasHTML) {
       $scope.post.caption = $sce.trustAsHtml($scope.post.caption);
       $scope.post.setasHTML = true;
     }
@@ -72,48 +72,86 @@ app.controller('profileCtrl', ['chatSocket', '$scope', '$http', '$location', 'Fl
   $scope.update = function(edituser) {
     edituser.url = $scope.profileurl;
     $http.post('/updateuser/' + $scope.user.username, edituser).success(function(res) {
+      $scope.user.profileurl = res.profileurl;
+      $scope.user.bio = res.bio;
       console.log('user has been updated')
       Flash.create(res.type, res.message);
       $scope.isediting = false;
       $window.location = $window.location.href;
     });
   }
-  $scope.like = function(post) {
+  $scope.like = function(post, ev) {
     post.name = $scope.username;
-    $http.post('/like/' + $scope.name, post).then(function(res) {
+    $http.post('/like/' + $scope.name, post).success(function(res) {
       console.log("liked")
-      $scope.user = res.user;
+      $scope.user.posts[$scope.user.posts.indexOf(post)] = res.post;
+      $scope.post.likedby = res.post.likedby;
     })
   }
-  $scope.unlike = function(post) {
+  $scope.unlike = function(post, ev) {
     post.name = $scope.username;
     $http.post('/unlike/' + $scope.name, post).success(function(res) {
       console.log("unliked")
-      $scope.user = res.user;
+      $scope.user.posts[$scope.user.posts.indexOf(post)] = res.post;
+      $scope.post.likedby = res.post.likedby;
     })
   }
   $scope.add = function(post, commentbody) {
+    console.log($scope.user.posts.indexOf(post))
     post.commentbody = {
       createdby: $scope.username,
       body: commentbody
     }
-    $http.post('/comment/' + $scope.name, post).success(function(res) {})
+    $http.post('/comment/' + $scope.name, post).success(function(res) {
+      $scope.user.posts[$scope.user.posts.indexOf(post)] = res.post;
+      $scope.commentbody = "";
+      $scope.post.comments = res.post.comments;
+    })
   }
-  $scope.send = function(message) {
-    console.log(message)
-    chatSocket.emit('sendingmsg', message)
-  }
-  chatSocket.on('returnmsg', function(data) {
-    $scope.messages.push(data);
-    console.log(data);
-  });
   $scope.delete = function(post) {
     $http.post('/delete/' + $scope.name, post).success(function(res) {
       console.log('post deleted');
     })
   }
-  $scope.gototag = function(tag) {
-      console.log("hi");
+
+  // mentions and hashtags
+  $scope.tagUserClick = function(e) {
+    var tagText = e.target.innerText;
+    $window.location = $window.location.origin + "/profile/" + tagText.substring(1, tagText.length);
+  };
+
+  $scope.tagTermClick = function(e) {
+    var tagText = e.target.innerText;
+    $window.location = $window.location.origin + "/hashtag/" + tagText.substring(1, tagText.length);
+  };
+
+  // following + unfollowing
+  $scope.following = function(username) {
+    return $scope.user.followers.includes($scope.username);
+  }
+  $scope.follow = function() {
+    console.log($scope.username)
+    $http.post('/follow/' + $scope.name, {name: $scope.username}).success(function(res) {
+      $scope.user.followers = res.followers
+      console.log(res.followers)
+    })
+  }
+  $scope.unfollow = function() {
+    console.log($scope.username)
+    $http.post('/unfollow/' + $scope.name, {name: $scope.username}).success(function(res) {
+      console.log(res.followers)
+      $scope.user.followers = res.followers
+    })
+  }
+  $scope.gotoprofile = function(name) {
+    $window.location = $window.location.origin + '/profile/' + name;
+  }
+  $scope.deletecomment = function(post, comment) {
+    var ind = $scope.user.posts.indexOf(post);
+    post.commenttodelete = comment;
+    $http.post('/deletecomment/' + post.createdby, post).success(function(res) {
+        $scope.user.posts[ind].comments = res.post.comments;
+    })
   }
   // internal funcs
   var formatDate = function(date1, date2) {

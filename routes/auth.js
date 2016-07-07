@@ -7,7 +7,6 @@ var User = mongoose.model('User');
 module.exports = function(passport) {
 	router.post('/auth/signup', function(req, res, next) {
 		passport.authenticate('signup', function(err, user, info) {
-			console.log(user);
 			if (err) {
 				return next(err);
 			}
@@ -16,7 +15,8 @@ module.exports = function(passport) {
 					type: "danger",
 					message: "This user already exists!"
 				})
-			} else {
+			} 
+			if (user) {
 				res.send({
 					type: "success",
 					message: "Successfully signed up! Log in with your information."
@@ -26,7 +26,6 @@ module.exports = function(passport) {
 	});
 	router.post('/auth/login', function(req, res, next) {
 		passport.authenticate('login', function(err, user, info) {
-			console.log(user);
 			if (err) {
 				return next(err);
 			}
@@ -35,7 +34,8 @@ module.exports = function(passport) {
 					type: "danger",
 					message: "User not found!"
 				})
-			} else {
+			} 
+			if (user) {
 				req.login(user, function(err) {
 					if (err) return next(err);
 					res.send({
