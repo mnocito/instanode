@@ -1,6 +1,6 @@
 # instanode
-instagram copy done in node
+Instagram copy-cat website written with node.js.
 
-features include user profiles, posting, tagging, following, liking, commenting, hashtagging (and pages to view posts with a hashtag), and realtime alerts on new likes/comments. 
+Features include user profiles, posting, tagging, following, liking, commenting, hashtagging (and pages to view posts with a certain hashtag), and realtime alerts on new likes/comments. 
 
-frontend is angularjs + angular material, backend is nodejs + express, database is mongodb
+The frontend is angularjs, and the backend is nodejs + express. The database I'm using is mongodb.
